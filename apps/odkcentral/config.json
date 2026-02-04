@@ -4,14 +4,19 @@
   "version": "1.0.0",
   "tipi_version": 3,
   "available": true,
+
+  "author": "lochland",
+  "source": "https://github.com/Lochllama-26/lochland",
+
   "short_desc": "ODK Central server for ODK Collect",
-  "description": "Deploys ODK Central with HTTPS via Traefik",
+  "description": "Deploys ODK Central with PostgreSQL, Redis, and HTTPS via Traefik.",
   "supported_architectures": ["amd64", "arm64"],
+
   "form_fields": [
     {
       "type": "fqdn",
       "label": "Hostname",
-      "description": "Fully qualified domain name for ODK Central",
+      "description": "Public HTTPS hostname for ODK Central (e.g. odk.example.com)",
       "required": true,
       "env_variable": "ODK_HOST"
     },
@@ -52,7 +57,7 @@
     {
       "type": "random",
       "label": "Encryption Secret",
-      "description": "Secret for encryption keys",
+      "description": "Long random string used to encrypt sensitive data",
       "required": true,
       "env_variable": "ENCRYPTION_SECRET",
       "min": 32
