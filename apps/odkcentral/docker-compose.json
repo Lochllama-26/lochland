@@ -8,8 +8,7 @@
         "POSTGRES_USER": "${POSTGRES_USER}",
         "POSTGRES_PASSWORD": "${POSTGRES_PASSWORD}",
         "POSTGRES_DB": "${POSTGRES_DB}"
-        }
-      ,
+      },
       "volumes": [
         {
           "hostPath": "odk-postgres-data",
@@ -53,5 +52,8 @@
       }
     }
   ],
-  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json"
+  "volumes": {
+    "odk-postgres-data": {},
+    "odk-central-data": {}
+  }
 }
