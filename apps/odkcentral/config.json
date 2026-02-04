@@ -4,14 +4,14 @@
   "version": "1.0.0",
   "tipi_version": 3,
   "available": true,
-
+  "port": 32179,
+  "exposable": true,
+  "dynamic_config": true,
   "author": "lochland",
   "source": "https://github.com/Lochllama-26/lochland",
-
   "short_desc": "ODK Central server for ODK Collect",
   "description": "Deploys ODK Central with PostgreSQL, Redis, and HTTPS via Traefik.",
   "supported_architectures": ["amd64", "arm64"],
-
   "form_fields": [
     {
       "type": "fqdn",
