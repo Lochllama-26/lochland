@@ -51,5 +51,7 @@
         "host": "${ODK_HOST}"
       }
     }
-  ]
+  ],
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json"
 }
