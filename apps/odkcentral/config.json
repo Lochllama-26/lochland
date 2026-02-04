@@ -1,0 +1,38 @@
+{
+  "name": "ODK Central",
+  "available": true,
+  "port": 32179,
+  "exposable": true,
+  "dynamic_config": true,
+  "id": "odkcentral",
+  "description": "ODK Central",
+  "tipi_version": 3,
+  "version": "",
+  "categories": [
+    "communications"
+  ],
+  "short_desc": "",
+  "author": "",
+  "source": "",
+  "website": "",
+  "form_fields": [
+    {
+      "type": "password",
+      "label": "DOMAIN",
+      "required": false,
+      "env_variable": "DOMAIN"
+    },
+    {
+      "type": "password",
+      "label": "SYSADMIN EMAIL",
+      "required": false,
+      "env_variable": "SYSADMIN_EMAIL"
+    }
+  ],
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "created_at": 1770143961,
+  "updated_at": 1770143961
+}
