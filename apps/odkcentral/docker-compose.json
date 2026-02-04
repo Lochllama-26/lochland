@@ -1,6 +1,7 @@
 {
-  "services": {
-    "postgres": {
+  "services": [
+    {
+      "name": "postgres",
       "image": "postgres:14",
       "restart": "unless-stopped",
       "environment": {
@@ -16,13 +17,13 @@
         }
       ]
     },
-
-    "redis": {
+    {
+      "name": "redis",
       "image": "redis:7",
       "restart": "unless-stopped"
     },
-
-    "odk-central": {
+    {
+      "name": "odk-central",
       "image": "getodk/central:latest",
       "restart": "unless-stopped",
       "depends_on": ["postgres", "redis"],
@@ -52,8 +53,7 @@
         "host": "${ODK_HOST}"
       }
     }
-  },
-
+  ],
   "volumes": {
     "odk-postgres-data": {},
     "odk-central-data": {}
