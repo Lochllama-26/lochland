@@ -11,9 +11,8 @@
       },
       "volumes": [
         {
-          "type": "volume",
-          "source": "odk-postgres-data",
-          "target": "/var/lib/postgresql/data"
+          "hostPath": "odk-postgres-data",
+          "containerPath": "/var/lib/postgresql/data"
         }
       ]
     },
@@ -41,9 +40,8 @@
       },
       "volumes": [
         {
-          "type": "volume",
-          "source": "odk-central-data",
-          "target": "/data"
+          "hostPath": "odk-central-data",
+          "containerPath": "/data"
         }
       ],
       "networking": {
@@ -53,9 +51,5 @@
         "host": "${ODK_HOST}"
       }
     }
-  ],
-  "volumes": {
-    "odk-postgres-data": {},
-    "odk-central-data": {}
-  }
+  ]
 }
