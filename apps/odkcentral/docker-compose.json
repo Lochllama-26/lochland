@@ -1,177 +1,61 @@
 {
-  "$schema": "https://schemas.runtipi.io/dynamic-compose.json",
-  "services": [
-    {
-      "name": "postgres14",
-      "restart": "always",
+  "services": {
+    "postgres": {
+      "image": "postgres:14",
+      "restart": "unless-stopped",
       "environment": {
         "POSTGRES_USER": "${POSTGRES_USER}",
         "POSTGRES_PASSWORD": "${POSTGRES_PASSWORD}",
         "POSTGRES_DB": "${POSTGRES_DB}"
-      }
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "odk-postgres-data",
+          "target": "/var/lib/postgresql/data"
+        }
+      ]
     },
-    {
-      "name": "postgres",
-      "environment": {
-        "PGUSER": "${PGUSER}",
-        "POSTGRES_INITDB_ARGS": "${POSTGRES_INITDB_ARGS}",
-        "POSTGRES_PASSWORD": "${POSTGRES_PASSWORD}",
-        "POSTGRES_DB": "${POSTGRES_DB}"
-      }
+
+    "redis": {
+      "image": "redis:7",
+      "restart": "unless-stopped"
     },
-    {
-      "name": "mail",
-      "image": "registry.gitlab.com/egos-tech/smtp:1.1.5",
-      "restart": "always",
+
+    "odk-central": {
+      "image": "getodk/central:latest",
+      "restart": "unless-stopped",
+      "depends_on": ["postgres", "redis"],
       "environment": {
-        "MAILNAME": "${MAILNAME}",
-        "DKIM_KEY_PATH": "${DKIM_KEY_PATH}"
-      }
-    },
-    {
-      "name": "service",
-      "restart": "always",
-      "command": [
-        "wait-for-it",
-        "${DB_HOST:-postgres14}:5432",
-        "--",
-        "./start-odk.sh"
-      ],
-      "environment": {
-        "DOMAIN": "${DOMAIN}",
+        "DOMAIN": "${ODK_HOST}",
+        "HTTPS": "true",
         "SYSADMIN_EMAIL": "${SYSADMIN_EMAIL}",
-        "HTTPS_PORT": "${HTTPS_PORT}",
-        "NODE_OPTIONS": "${NODE_OPTIONS}",
-        "DB_HOST": "${DB_HOST}",
-        "DB_USER": "${DB_USER}",
-        "DB_PASSWORD": "${DB_PASSWORD}",
-        "DB_POOL_SIZE": "${DB_POOL_SIZE}",
-        "DB_NAME": "${DB_NAME}",
-        "DB_SSL": "${DB_SSL}",
-        "EMAIL_FROM": "${EMAIL_FROM}",
-        "EMAIL_HOST": "${EMAIL_HOST}",
-        "EMAIL_PORT": "${EMAIL_PORT}",
-        "EMAIL_SECURE": "${EMAIL_SECURE}",
-        "EMAIL_IGNORE_TLS": "${EMAIL_IGNORE_TLS}",
-        "EMAIL_USER": "${EMAIL_USER}",
-        "EMAIL_PASSWORD": "${EMAIL_PASSWORD}",
-        "OIDC_ENABLED": "${OIDC_ENABLED}",
-        "OIDC_ISSUER_URL": "${OIDC_ISSUER_URL}",
-        "OIDC_CLIENT_ID": "${OIDC_CLIENT_ID}",
-        "OIDC_CLIENT_SECRET": "${OIDC_CLIENT_SECRET}",
-        "PGAPPNAME": "${PGAPPNAME}",
-        "SENTRY_ORG_SUBDOMAIN": "${SENTRY_ORG_SUBDOMAIN}",
-        "SENTRY_KEY": "${SENTRY_KEY}",
-        "SENTRY_PROJECT": "${SENTRY_PROJECT}",
-        "SENTRY_TRACE_RATE": "${SENTRY_TRACE_RATE}",
-        "S3_SERVER": "${S3_SERVER}",
-        "S3_ACCESS_KEY": "${S3_ACCESS_KEY}",
-        "S3_SECRET_KEY": "${S3_SECRET_KEY}",
-        "S3_BUCKET_NAME": "${S3_BUCKET_NAME}",
-        "SESSION_LIFETIME": "${SESSION_LIFETIME}"
+        "SYSADMIN_PASSWORD": "${SYSADMIN_PASSWORD}",
+        "DB_HOST": "postgres",
+        "DB_USER": "${POSTGRES_USER}",
+        "DB_PASSWORD": "${POSTGRES_PASSWORD}",
+        "DB_NAME": "${POSTGRES_DB}",
+        "REDIS_HOST": "redis",
+        "ENCRYPTION_SECRET": "${ENCRYPTION_SECRET}"
       },
-      "dependsOn": {
-        "secrets": {
-          "condition": "service_started"
-        },
-        "postgres14": {
-          "condition": "service_started"
-        },
-        "mail": {
-          "condition": "service_started"
-        },
-        "pyxform": {
-          "condition": "service_started"
-        },
-        "enketo": {
-          "condition": "service_started"
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "odk-central-data",
+          "target": "/data"
         }
-      },
-      "logging": {
-        "driver": "local"
+      ],
+      "networking": {
+        "type": "http",
+        "port": 8383,
+        "https": true,
+        "host": "${ODK_HOST}"
       }
-    },
-    {
-      "name": "nginx",
-      "restart": "always",
-      "environment": {
-        "DOMAIN": "${DOMAIN}",
-        "CERTBOT_EMAIL": "${CERTBOT_EMAIL}",
-        "SSL_TYPE": "${SSL_TYPE}",
-        "SENTRY_ORG_SUBDOMAIN": "${SENTRY_ORG_SUBDOMAIN}",
-        "SENTRY_KEY": "${SENTRY_KEY}",
-        "SENTRY_PROJECT": "${SENTRY_PROJECT}",
-        "OIDC_ENABLED": "${OIDC_ENABLED}"
-      },
-      "dependsOn": {
-        "service": {
-          "condition": "service_started"
-        },
-        "enketo": {
-          "condition": "service_started"
-        }
-      },
-      "healthCheck": {
-        "test": [
-          "CMD-SHELL",
-          "nc -z localhost 80 || exit 1"
-        ]
-      },
-      "logging": {
-        "driver": "local",
-        "options": {
-          "max-file": "30"
-        }
-      }
-    },
-    {
-      "name": "pyxform",
-      "image": "ghcr.io/getodk/pyxform-http:v4.2.0",
-      "restart": "always"
-    },
-    {
-      "name": "secrets",
-      "command": [
-        "./generate-secrets.sh"
-      ]
-    },
-    {
-      "name": "enketo",
-      "restart": "always",
-      "environment": {
-        "DOMAIN": "${DOMAIN}",
-        "SUPPORT_EMAIL": "${SUPPORT_EMAIL}",
-        "HTTPS_PORT": "${HTTPS_PORT}"
-      },
-      "dependsOn": {
-        "secrets": {
-          "condition": "service_started"
-        },
-        "enketo_redis_main": {
-          "condition": "service_started"
-        },
-        "enketo_redis_cache": {
-          "condition": "service_started"
-        }
-      }
-    },
-    {
-      "name": "enketo_redis_main",
-      "image": "redis:7.4.7",
-      "restart": "always",
-      "command": [
-        "redis-server",
-        "/usr/local/etc/redis/redis.conf"
-      ]
-    },
-    {
-      "name": "enketo_redis_cache",
-      "image": "redis:7.4.7",
-      "restart": "always",
-      "command": [
-        "redis-server",
-        "/usr/local/etc/redis/redis.conf"
-      ]
     }
-  ]
+  },
+
+  "volumes": {
+    "odk-postgres-data": {},
+    "odk-central-data": {}
+  }
 }

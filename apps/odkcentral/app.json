@@ -1,0 +1,9 @@
+{
+  "id": "odk-central",
+  "name": "ODK Central",
+  "version": "1.0.0",
+  "scheme": "https",
+  "path": "/",
+  "composePath": "docker-compose.json",
+  "icon": "https://getodk.org/assets/img/favicon.ico"
+}

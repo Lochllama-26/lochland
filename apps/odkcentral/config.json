@@ -1,38 +1,61 @@
 {
   "name": "ODK Central",
-  "available": true,
-  "port": 32179,
-  "exposable": true,
-  "dynamic_config": true,
-  "id": "odkcentral",
-  "description": "ODK Central",
+  "id": "odk-central",
+  "version": "1.0.0",
   "tipi_version": 3,
-  "version": "",
-  "categories": [
-    "communications"
-  ],
-  "short_desc": "",
-  "author": "",
-  "source": "",
-  "website": "",
+  "available": true,
+  "short_desc": "ODK Central server for ODK Collect",
+  "description": "Deploys ODK Central with HTTPS via Traefik",
+  "supported_architectures": ["amd64", "arm64"],
   "form_fields": [
     {
-      "type": "password",
-      "label": "DOMAIN",
-      "required": false,
-      "env_variable": "DOMAIN"
+      "type": "fqdn",
+      "label": "Hostname",
+      "description": "Fully qualified domain name for ODK Central",
+      "required": true,
+      "env_variable": "ODK_HOST"
+    },
+    {
+      "type": "email",
+      "label": "Sysadmin Email",
+      "required": true,
+      "env_variable": "SYSADMIN_EMAIL"
     },
     {
       "type": "password",
-      "label": "SYSADMIN EMAIL",
-      "required": false,
-      "env_variable": "SYSADMIN_EMAIL"
+      "label": "Sysadmin Password",
+      "required": true,
+      "env_variable": "SYSADMIN_PASSWORD",
+      "min": 8
+    },
+    {
+      "type": "text",
+      "label": "PostgreSQL Username",
+      "required": true,
+      "env_variable": "POSTGRES_USER",
+      "default": "odk"
+    },
+    {
+      "type": "password",
+      "label": "PostgreSQL Password",
+      "required": true,
+      "env_variable": "POSTGRES_PASSWORD",
+      "min": 8
+    },
+    {
+      "type": "text",
+      "label": "PostgreSQL Database",
+      "required": true,
+      "env_variable": "POSTGRES_DB",
+      "default": "odk"
+    },
+    {
+      "type": "random",
+      "label": "Encryption Secret",
+      "description": "Secret for encryption keys",
+      "required": true,
+      "env_variable": "ENCRYPTION_SECRET",
+      "min": 32
     }
-  ],
-  "supported_architectures": [
-    "amd64",
-    "arm64"
-  ],
-  "created_at": 1770143961,
-  "updated_at": 1770143961
+  ]
 }
