@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "tipi_version": 3,
   "available": true,
-  "port": 32179,
+  "port": 8383,
   "exposable": true,
   "dynamic_config": true,
   "author": "lochland",
